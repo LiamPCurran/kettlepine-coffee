@@ -1,0 +1,13 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "landingPage": "/",
+  "preferredVersions": { "php": "8.3", "wp": "latest" },
+  "features": { "networking": true },
+  "steps": [
+    { "step": "installTheme", "themeData": { "resource": "wordpress.org/themes", "slug": "twentytwentyfive" }, "options": { "activate": false } },
+    { "step": "installPlugin", "pluginData": { "resource": "wordpress.org/plugins", "slug": "woocommerce" }, "options": { "activate": true } },
+    { "step": "activatePlugin", "pluginPath": "kettlepine-setup/kettlepine-setup.php" },
+    { "step": "activateTheme", "themeFolderName": "kettlepine" },
+    { "step": "runPHP", "code": "<?php require_once '/wordpress/wp-load.php'; echo kettlepine_setup();" }
+  ]
+}

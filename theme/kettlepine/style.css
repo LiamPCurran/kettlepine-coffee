@@ -1,0 +1,15 @@
+/*
+Theme Name: Kettlepine
+Template: twentytwentyfive
+Description: Lightweight child theme for the Kettlepine Coffee Roasters concept store (fictional brand). Portfolio demo by Liam Curran.
+Version: 1.0.0
+Requires at least: 6.5
+Text Domain: kettlepine
+License: GPL-2.0-or-later
+*/
+.kp-hero img { border-radius: 14px; max-width: 100%; height: auto; display: block; }
+.kp-badges { list-style: none; padding: 0; display: flex; gap: 1.25rem; flex-wrap: wrap; font-size: .95rem; }
+.kp-badges li::before { content: "\2713\00a0"; color: var(--wp--preset--color--accent-1); font-weight: 700; }
+.woocommerce ul.products li.product img, .wc-block-components-product-image img { border-radius: 10px; }
+.kp-concept { font-size: .85rem; opacity: .9; }
+.woocommerce-store-notice, p.demo_store { background: #2f5d4a !important; }

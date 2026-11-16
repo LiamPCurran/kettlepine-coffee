@@ -51,3 +51,9 @@ add_action( 'wp_head', function () {
 		printf( '<meta name="description" content="%s">' . "\n", esc_attr( wp_strip_all_tags( $desc ) ) );
 	}
 }, 2 );
+
+// WooCommerce auto-inserts a mini-cart into the header via block hooks; the header already has a "Cart" link,
+// and the mini-cart drawer causes an aria-hidden-focus accessibility issue.
+add_filter( 'hooked_block_types', function ( $hooked, $position, $anchor ) {
+	return array_values( array_diff( $hooked, array( 'woocommerce/mini-cart' ) ) );
+}, 20, 3 );

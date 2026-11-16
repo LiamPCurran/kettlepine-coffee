@@ -30,6 +30,7 @@ bp = {
     "meta": {"title": "Kettlepine Coffee Roasters (concept store)", "author": user,
              "description": "WooCommerce concept store by Liam Curran. Fictional brand; no real orders are processed."},
     "landingPage": "/",
+    "login": False,
     "preferredVersions": {"php": "8.3", "wp": "latest"},
     "features": {"networking": True},
     "steps": [

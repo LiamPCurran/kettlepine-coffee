@@ -121,8 +121,6 @@ for p in products:
     img.save(OUT / f'{p["slug"]}.webp', quality=82, method=6)
 theme_assets = ROOT / "theme" / "kettlepine" / "assets"
 theme_assets.mkdir(parents=True, exist_ok=True)
-h = hero()
-h.save(theme_assets / "hero.webp", quality=80, method=6)
-h.resize((600, 450), Image.LANCZOS).save(theme_assets / "hero-600.webp", quality=80, method=6)
+# The old illustrated hero (hero()) was replaced in v2 by a photo; see make_photos.py.
 for f in sorted(OUT.iterdir()) + sorted(theme_assets.iterdir()):
     print(f.name, f.stat().st_size)

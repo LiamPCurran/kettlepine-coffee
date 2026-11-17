@@ -5,7 +5,7 @@
 defined( 'ABSPATH' ) || exit;
 
 add_action( 'wp_enqueue_scripts', function () {
-	wp_enqueue_style( 'kettlepine', get_stylesheet_uri(), array(), '1.0.0' );
+	wp_enqueue_style( 'kettlepine', get_stylesheet_uri(), array(), '2.0.0' );
 } );
 
 // No emoji polyfill: modern browsers render emoji natively.
@@ -23,16 +23,40 @@ remove_action( 'wp_head', 'wp_shortlink_wp_head' );
 // Load block styles only for blocks actually on the page.
 add_filter( 'should_load_separate_core_block_assets', '__return_true' );
 
-// Preload the hero image on the front page (it's the LCP element).
+// Preload the hero photo and the two fonts on the front page (the hero is the LCP element).
 add_action( 'wp_head', function () {
+	printf( '<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>' . "
+", esc_url( get_theme_file_uri( 'assets/fonts/fraunces.woff2' ) ) );
 	if ( is_front_page() ) {
 		printf(
-			'<link rel="preload" as="image" href="%1$s" imagesrcset="%2$s 600w, %1$s 1200w" imagesizes="(max-width: 781px) 100vw, 600px" fetchpriority="high">' . "\n",
-			esc_url( get_theme_file_uri( 'assets/hero.webp' ) ),
-			esc_url( get_theme_file_uri( 'assets/hero-600.webp' ) )
+			'<link rel="preload" as="image" href="%1$s" imagesrcset="%1$s 800w, %2$s 1600w" imagesizes="100vw" fetchpriority="high">' . "
+",
+			esc_url( get_theme_file_uri( 'assets/img/hero-800.webp' ) ),
+			esc_url( get_theme_file_uri( 'assets/img/hero-1600.webp' ) )
 		);
 	}
 }, 1 );
+
+// Product cards: show roast level and tasting notes under the title (from the product's attributes).
+add_action( 'woocommerce_after_shop_loop_item_title', function () {
+	global $product;
+	if ( ! $product ) {
+		return;
+	}
+	$roast = $product->get_attribute( 'Roast' );
+	$notes = $product->get_attribute( 'Tasting notes' );
+	if ( $roast && 'Mixed' !== $roast ) {
+		printf( '<span class="kp-roast">%s roast</span>', esc_html( $roast ) );
+	}
+	if ( $notes ) {
+		printf( '<p class="kp-card-meta">%s</p>', esc_html( str_replace( ', ', ' · ', $notes ) ) );
+	}
+}, 5 );
+
+// Single product: a short reassurance panel under the add-to-cart button.
+add_action( 'woocommerce_after_add_to_cart_form', function () {
+	echo '<ul class="kp-trust"><li>Roasted to order, shipped within 2 business days</li><li>Free shipping in Canada on orders over $50</li><li>30-day satisfaction promise</li></ul>';
+} );
 
 // Meta descriptions without an SEO plugin (a small store doesn't need one).
 add_action( 'wp_head', function () {

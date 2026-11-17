@@ -8,6 +8,20 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_enqueue_style( 'kettlepine', get_stylesheet_uri(), array(), '2.0.0' );
 } );
 
+// Front-end JS performance: drop jQuery Migrate and load jQuery + WooCommerce scripts with `defer`
+// (WordPress only applies the strategy where every dependent script can be deferred too).
+add_action( 'wp_default_scripts', function ( $scripts ) {
+	if ( ! is_admin() && isset( $scripts->registered['jquery'] ) ) {
+		$scripts->registered['jquery']->deps = array( 'jquery-core' );
+	}
+} );
+add_action( 'wp_enqueue_scripts', function () {
+	foreach ( array( 'jquery-core', 'jquery', 'js-cookie', 'wc-js-cookie', 'woocommerce', 'wc-add-to-cart', 'wc-single-product', 'jquery-blockui', 'wc-jquery-blockui',
+		'zoom', 'wc-zoom', 'flexslider', 'wc-flexslider', 'photoswipe', 'wc-photoswipe', 'photoswipe-ui-default', 'wc-photoswipe-ui-default' ) as $h ) {
+		wp_script_add_data( $h, 'strategy', 'defer' );
+	}
+}, 999 );
+
 // No emoji polyfill: modern browsers render emoji natively.
 remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 remove_action( 'wp_print_styles', 'print_emoji_styles' );

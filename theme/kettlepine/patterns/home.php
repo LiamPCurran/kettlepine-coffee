@@ -74,7 +74,7 @@ foreach ( array(
 
 <!-- wp:html -->
 <section class="kp-story alignfull"><div class="kp-wrap kp-split">
-<div class="kp-story-img"><img src="<?php echo $kp_img( 'story', 600 ); ?>" srcset="<?php echo $kp_img( 'story', 600 ); ?> 600w, <?php echo $kp_img( 'story', 1000 ); ?> 1000w" sizes="(max-width: 900px) 100vw, 520px" width="1000" height="1250" loading="lazy" decoding="async" alt="Fresh coffee beans turning in the roaster's cooling tray">
+<div class="kp-story-img"><img src="<?php echo $kp_img( 'story', 600 ); ?>" srcset="<?php echo $kp_img( 'story', 600 ); ?> 600w, <?php echo $kp_img( 'story', 800 ); ?> 800w" sizes="(max-width: 900px) 100vw, 520px" width="800" height="1000" loading="lazy" decoding="async" alt="Fresh coffee beans turning in the roaster's cooling tray">
 <div class="kp-stamp"><strong>Roasted</strong><span>Tuesday</span><small>Shipped Wednesday</small></div></div>
 <div>
 <p class="kp-eyebrow">Our story</p>

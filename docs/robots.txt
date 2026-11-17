@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://liampcurran.github.io/kettlepine-coffee/sitemap.xml

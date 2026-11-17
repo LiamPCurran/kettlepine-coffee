@@ -13,7 +13,7 @@ OUT.mkdir(parents=True, exist_ok=True)
 
 PHOTOS = {  # name: (unsplash id, crop box, widths)
     "hero":       ("6HR8vpjYUHo", (0, 0, 1600, 1000), (800, 1600)),      # beans pouring out of the roaster
-    "story":      ("Lk4UzBF6vss", (0, 300, 1600, 2300), (600, 1000)),    # beans cooling in the roaster (4:5)
+    "story":      ("Lk4UzBF6vss", (0, 300, 1600, 2300), (600, 800)),    # beans cooling in the roaster (4:5)
     "blends":     ("4KqHNQ3sJ6g", (0, 400, 1600, 2000), (500,)),
     "single-origin": ("S8daAB_nJSg", (0, 400, 1600, 2000), (500,)),
     "decaf":      ("MK60jE_6zXU", (0, 900, 1600, 2500), (500,)),
@@ -24,5 +24,5 @@ PHOTOS = {  # name: (unsplash id, crop box, widths)
 for name, (pid, box, widths) in PHOTOS.items():
     im = Image.open(SRC / f"u_{pid}.jpg").convert("RGB").crop(box)
     for w in widths:
-        im.resize((w, round(im.height * w / im.width)), Image.LANCZOS).save(OUT / f"{name}-{w}.webp", "WEBP", quality=70, method=6)
+        im.resize((w, round(im.height * w / im.width)), Image.LANCZOS).save(OUT / f"{name}-{w}.webp", "WEBP", quality=62, method=6)
     print(name, im.size)

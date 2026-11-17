@@ -21,6 +21,7 @@ $kp_ico = array(
 );
 $kp_svg = function ( $k ) use ( $kp_ico ) { return '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' . $kp_ico[ $k ] . '</svg>'; };
 $kp_star = str_repeat( '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>', 5 );
+ob_start(); // "before" mode rewrites the markup below (see the end of this file)
 ?>
 <!-- wp:html -->
 <section class="kp-hero alignfull">
@@ -116,3 +117,20 @@ foreach ( array(
 <p class="kp-news-msg" role="status" hidden>Thanks! This is a concept store, so nothing was sent.</p>
 </form></div></section>
 <!-- /wp:html -->
+<?php
+$kp_html = ob_get_clean();
+if ( function_exists( 'kettlepine_before' ) && kettlepine_before() ) {
+	// Typical unoptimized build: full-size PNG/JPEG photos, no srcset, no dimensions, no lazy loading,
+	// and the main headline as a styled <div> instead of an <h1>.
+	$kp_html = preg_replace_callback(
+		'#<img[^>]*src="([^"]*/assets/img/)([a-z-]+)-\d+\.webp"[^>]*alt="([^"]*)"[^>]*>#',
+		function ( $m ) {
+			$ext = in_array( $m[2], array( 'hero', 'story', 'pourover' ), true ) ? 'png' : 'jpg';
+			$cls = preg_match( '#class="([^"]+)"#', $m[0], $c ) ? ' class="' . $c[1] . '"' : '';
+			return '<img' . $cls . ' src="' . str_replace( '/assets/img/', '/assets/img-before/', $m[1] ) . $m[2] . '.' . $ext . '" alt="' . $m[3] . '">';
+		},
+		$kp_html
+	);
+	$kp_html = preg_replace( '#<h1>(.*?)</h1>#s', '<div class="kp-h1">$1</div>', $kp_html );
+}
+echo $kp_html;

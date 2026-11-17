@@ -26,3 +26,14 @@ for name, (pid, box, widths) in PHOTOS.items():
     for w in widths:
         im.resize((w, round(im.height * w / im.width)), Image.LANCZOS).save(OUT / f"{name}-{w}.webp", "WEBP", quality=62, method=6)
     print(name, im.size)
+
+# "Before" versions for the speed case study: full-size, uncompressed, one file each.
+BEFORE = ROOT / "theme" / "kettlepine" / "assets" / "img-before"
+BEFORE.mkdir(parents=True, exist_ok=True)
+for name, (pid, box, widths) in PHOTOS.items():
+    im = Image.open(SRC / f"u_{pid}.jpg").convert("RGB").crop(box)
+    if name in ("hero", "story", "pourover"):
+        im.save(BEFORE / f"{name}.png", "PNG")
+    else:
+        im.save(BEFORE / f"{name}.jpg", "JPEG", quality=95)
+print("before images:", sorted(p.name for p in BEFORE.iterdir()))

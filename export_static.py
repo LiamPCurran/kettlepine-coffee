@@ -9,16 +9,20 @@ The pages are WordPress's own HTML. Server-only features are swapped out:
 - add to cart / cart / checkout -> a small client-side demo cart (assets/kp-cart.js, localStorage, no payment)
 - account, reviews form, sorting dropdown, ajax/tracking scripts -> removed
 """
-import html, json, re, shutil
+import html, json, re, shutil, sys
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
 
-SRC = "http://127.0.0.1:9400"
-PREFIX = "/kettlepine-coffee"
+# python export_static.py                -> optimized store (port 9400) -> docs/
+# python export_static.py before         -> "before" store (port 9401) -> docs/before/
+MODE = sys.argv[1] if len(sys.argv) > 1 else "after"
+SRC = "http://127.0.0.1:9401" if MODE == "before" else "http://127.0.0.1:9400"
+PREFIX = "/kettlepine-coffee/before" if MODE == "before" else "/kettlepine-coffee"
 LIVE = "https://liampcurran.github.io" + PREFIX
+CANON = "https://liampcurran.github.io/kettlepine-coffee"  # the before copy canonicalises to the optimized pages
 ROOT = Path(__file__).parent
 OUT = ROOT / "_static" / PREFIX.strip("/")
 S = requests.Session()
@@ -95,7 +99,7 @@ def clean(soup, path):
         el.string = "Reviews are switched off in this static portfolio demo."
     # Canonical / og:url must be absolute live URLs
     for el in soup.find_all("link", rel="canonical"):
-        el["href"] = LIVE + path
+        el["href"] = CANON + path
     if path in ("/cart/", "/checkout/"):
         main = soup.find("main")
         if main:
@@ -109,7 +113,8 @@ def clean(soup, path):
     body.append(BeautifulSoup(f'<script src="{SRC}/kp-cart.js" defer></script>', "html.parser"))
     # Footer note: say what this is
     for el in soup.select(".kp-concept"):
-        el.append(" This is a static snapshot of the WordPress + WooCommerce build; the cart and checkout are demo-only.")
+        el.append(" This is a static snapshot of the WordPress + WooCommerce build; the cart and checkout are demo-only."
+                  + (" This is the deliberately unoptimized \"before\" version used in the speed case study." if MODE == "before" else ""))
 
 
 def crawl():
@@ -204,7 +209,21 @@ api.mkdir(parents=True, exist_ok=True)
 (api / "cart").write_text(json.dumps({"items": [], "items_count": 0, "items_weight": 0, "coupons": [], "errors": [], "needs_payment": False, "needs_shipping": False,
     "totals": {"total_items": "0", "total_price": "0", "currency_code": "CAD", "currency_symbol": "$", "currency_minor_unit": 2}}), encoding="utf-8")
 (OUT / ".nojekyll").write_text("", encoding="utf-8")
-(OUT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+if MODE == "before":
+    (OUT / "sitemap.xml").unlink(missing_ok=True)
+else:
+  (OUT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
     + "".join(f"<url><loc>{LIVE}{p}</loc></url>" for p in pages_done if p not in ("/cart/", "/checkout/")) + "</urlset>\n", encoding="utf-8")
-(OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {LIVE}/sitemap.xml\n", encoding="utf-8")
+  (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {LIVE}/sitemap.xml\n", encoding="utf-8")
 print(len(pages_done), "pages ->", OUT)
+
+# Publish into docs/ (GitHub Pages). The optimized export keeps docs/before/ intact.
+DOCS = ROOT / "docs" / ("before" if MODE == "before" else "")
+DOCS.mkdir(parents=True, exist_ok=True)
+for old in DOCS.iterdir():
+    if MODE != "before" and old.name == "before":
+        continue
+    shutil.rmtree(old) if old.is_dir() else old.unlink()
+for f in OUT.iterdir():
+    shutil.copytree(f, DOCS / f.name) if f.is_dir() else shutil.copy2(f, DOCS / f.name)
+print("published to", DOCS)

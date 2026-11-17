@@ -18,7 +18,7 @@ shutil.copy(ROOT / "data" / "products.json", ROOT / "plugin" / "kettlepine-setup
 def zipdir(src: Path, dest: Path):
     with zipfile.ZipFile(dest, "w", zipfile.ZIP_DEFLATED) as z:
         for f in sorted(src.rglob("*")):
-            if f.is_file():
+            if f.is_file() and "img-before" not in f.parts:
                 z.write(f, Path(src.name) / f.relative_to(src))
 
 

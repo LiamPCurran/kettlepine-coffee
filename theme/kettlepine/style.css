@@ -37,7 +37,7 @@ body.admin-bar .kp-header { top:32px; }
 .kp-hero-bg { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:60% 50%; z-index:-2; }
 .kp-hero::before { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,rgba(24,14,8,.88) 0%,rgba(24,14,8,.65) 45%,rgba(24,14,8,.15) 100%); }
 .kp-hero-inner { padding-block:96px; width:100%; }
-.kp-hero h1 { color:#fff; font-size:clamp(2.6rem,6vw,4.6rem); max-width:11em; margin:0 0 1.2rem; line-height:1.02; font-weight:600; }
+.kp-hero h1, .kp-hero .kp-h1 { font-family:var(--wp--preset--font-family--serif); font-weight:600; letter-spacing:-.02em; color:#fff; font-size:clamp(2.6rem,6vw,4.6rem); max-width:11em; margin:0 0 1.2rem; line-height:1.02; font-weight:600; }
 .kp-hero .kp-eyebrow { color:var(--kp-honey); }
 .kp-lede { font-size:clamp(1.1rem,1.6vw,1.3rem); max-width:31em; color:#f2e7da; margin:0 0 2rem; }
 @media (max-width:700px){ .kp-hero::before { background:linear-gradient(180deg,rgba(24,14,8,.7),rgba(24,14,8,.85)); } .kp-hero-inner { padding-block:72px; } }

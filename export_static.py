@@ -82,6 +82,13 @@ def collect_assets(soup, page_url):
                 assets.add(urljoin(page_url, m))
 
 
+def collect_text_urls(text):
+    """Asset URLs mentioned anywhere in the page, including inside inline JSON/JS settings."""
+    t = text.replace(chr(92) + "/", "/")
+    for m in re.findall(re.escape(SRC) + r"/[^\"'\s<>()]+?\.(?:js|css|png|jpe?g|webp|svg|woff2?)", t):
+        assets.add(m)
+
+
 def clean(soup, path):
     for el in soup.find_all("script", src=True):
         if any(d in el["src"] for d in DROP_SCRIPTS):
@@ -127,6 +134,7 @@ def crawl():
             print("skip", path, r.status_code)
             continue
         soup = BeautifulSoup(r.text, "html.parser")
+        collect_text_urls(r.text)
         for a in soup.find_all("a", href=True):
             u = urljoin(SRC + path, a["href"]).split("#")[0]
             if u.startswith(SRC) and want_page(u):
